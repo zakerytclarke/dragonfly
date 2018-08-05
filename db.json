@@ -1,0 +1,50 @@
+{
+"users":{
+  "john10":{
+    "name":"Jane",
+    "gender":"female",
+    "age":20,
+    "password":"lorem",
+    "config":{
+      "write_password":[],
+      "read_password":[],
+      "read_allowed":[],
+      "read_blocked":[],
+      "write_allowed":[],
+      "write_blocked":[]
+    }
+  },
+  "jane43":{
+    "name":"Jane",
+    "gender":"female",
+    "age":43,
+    "password":"ipsum",
+    "config":{
+      "password":"ipsum"
+    }
+  },
+  "config":{
+    "read":["https://zakerytclarke.github.io/userform"],
+    "write":[]
+  }
+
+},
+"views":{
+  "page1":{
+    "count":45,
+    "config":{
+      "read":[],
+      "write":[],
+      "type":"number"
+    }
+  },
+  "page2":{
+    "count":23
+  }
+
+},
+"config":{
+  "read":[null],
+  "write":[null]
+}
+}
