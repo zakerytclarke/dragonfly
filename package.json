@@ -1,0 +1,30 @@
+{
+  "name": "e-center.tv",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zakerytclarke/e-center.tv.git"
+  },
+  "author": "",
+  "license": "Unlicense",
+  "bugs": {
+    "url": "https://github.com/zakerytclarke/e-center.tv/issues"
+  },
+  "homepage": "https://github.com/zakerytclarke/e-center.tv#readme",
+  "dependencies": {
+    "ajax-request": "^1.2.3",
+    "express": "^4.16.4",
+    "express-validator": "^6.1.0",
+    "pg": "^7.11.0"
+  },
+  "engines": {
+    "node": "11.8.0",
+    "npm": "6.5.0"
+  }
+}
