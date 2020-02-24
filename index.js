@@ -11,21 +11,31 @@
  * Features:                                                                   *
  * -Built in Server Rendering                                                  *
  * -No server skills required                                                  *
- * -Account Management                                                         *
- * -Serverless design                                                          *
+ * -Easy to use API                                                            *
  *                                                                             *
  \*****************************************************************************/
 
 var express=require("express");
+var bodyParser = require('body-parser');
 var app=express();
 var path=require("path");
 var fs=require("fs");
+try{
+  var config=JSON.parse(fs.readFileSync("./config.json"));
+}catch(err){
+  var config={
+    name:"Dragonfly"
+  }
+}
+var figlet=require("figlet");
 
-//var DB=require("./db.js");
 
 var functions=require("./functions/index.js");
 
 app.set("port",(process.env.PORT||5000));
+
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
 /*CORS*/
 app.use(function(req, res, next) {
@@ -67,41 +77,90 @@ app.use(express.static('public'));
 
 
 
+/**
+ * Loads Server routes
+ *
+ */
+ function start(){
+   setRoutes(functions);
 
-function start(){
-  for(var key in functions){
-    app.get("/"+key, function(request,response) {
-      var args=request.query;
-      response.send(functions[key](args));
-    });
-  }
-}
+   function setRoutes(functions,prefix){
+     console.log(Object.keys(functions));
+     if(prefix==null){
+       prefix="";
+     }
+     for(var key in functions){//For all keys
+       console.log(key,functions[key].constructor),functions[key] && {}.toString.call(functions[key]) === '[object Function]';
+       if(functions[key] && {}.toString.call(functions[key]) === '[object Function]'){//Function, so render
+         app.get(key, async function(request,response) {
+           var args=request.query;
+           var data=await functions[key](args);
+           response.send(data);
+         });
+         app.post(key, async function(request,response) {
+           var args=request.body;
+           console.log(request.body);
+           var data=await functions[key](args);
+           response.send(data);
+         });
+       }else if(key.constructor===Object){
+         setRoutes(functions[key],prefix+key+"/");//Recursivelyy set up routes
+       }else{
+         console.log("Unable to load route: "+prefix+key)
+       }
+
+
+     }
+
+
+
+   }
+ }
+
 
 
 
 
 
 app.listen(app.get('port'), function() {
+  console.log(figlet.textSync(config.name, {
+    font: 'basic',
+    horizontalLayout: 'default',
+    verticalLayout: 'default'
+}));
+
+
   start();
   console.log("Server Loaded");
   console.log("Port:" + app.get('port'));
+  console.log("");
+  console.log("Routes:");
+  console.log("===================================");
+  var routes=app._router.stack.filter(r => r.route).map(r => r.route);
+  for(var i=0;i<routes.length;i++){
+    console.log(routes[i].stack[0].method.toUpperCase(),routes[i].path);
+  }
+  console.log("===================================");
 });
 
 
 
-
+/**
+ * Function to handle HTML import statements
+ * Loads a file into current buffer at import statement
+ */
 function render(html){
   var out="";
   var end=0;
   var start=0;
 
-  while(html.indexOf("<import src=\"",end)!=-1){
+  while(html.indexOf("<import src=\"",end)!=-1){//For all imports
     start=html.indexOf("<import src=\"",end);
     out+=html.substring(end,start);
     end=html.indexOf("\">",start);
     var filename=html.substring(start+13,end);
     end+=2;
-    if(fs.existsSync("./public/"+filename)){
+    if(fs.existsSync("./public/"+filename)){//Recursively Render files
       out+=render(fs.readFileSync("./public/"+filename,"utf8"));
     }
   }
