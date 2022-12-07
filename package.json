@@ -19,7 +19,7 @@
   "homepage": "https://github.com/zakerytclarke/dragonfly#readme",
   "dependencies": {
     "ajax-request": "^1.2.3",
-    "express": "^4.16.4",
+    "express": "^4.18.2",
     "express-validator": "^6.1.0",
     "figlet": "^1.3.0"
   },
